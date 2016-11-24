@@ -43,13 +43,13 @@ public class VoxReader {
 /// </summary>
 /// <param name="stream">An open BinaryReader stream that is the .vox file.</param>
 /// <param name="overrideColors">Optional color lookup table for converting RGB values into my internal engine color format.</param>
-/// <returns>The voxel chunk data for the MagicaVoxel .vox file.</returns>
-    private static int[] FromMagica(BinaryReader stream) {
+/// <returns>The voxel chunk data for the MagicaVoxel .vox file. in a buffer of isze(32(x)*128(z)*32(y))
+// </returns>
+    public static VoxelData fromMagica(BinaryReader stream) {
         // check out http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=Home for the file format used below
         // we're going to return a voxel chunk worth of data
-        int[] data = new int[32 * 128 * 32]; //TODO hardcoded max size!!
         int[] colors = null;
-        MagicaVoxelData voxelData = null;
+        MagicaVoxelDataBuffer voxelBuffer = null;
 
         String magic = stream.ReadChars(4);
         int version = stream.ReadInt32();
@@ -80,9 +80,9 @@ public class VoxReader {
                     int div = (subsample ? 2 : 1);
 
                     // each voxel has x, y, z and color index values
-                    voxelData = new MagicaVoxelData(numVoxels);
-                    for (int i = 0; i < voxelData.nvoxels; i++)
-                        voxelData.readVoxel(stream,i,subsample);
+                    voxelBuffer = new MagicaVoxelDataBuffer(numVoxels);
+                    for (int i = 0; i < voxelBuffer.nvoxels; i++)
+                        voxelBuffer.readVoxel(stream,i,subsample);
                 } else if (chunkName.equals("RGBA") ) {
                     colors = new int[256];
 
@@ -99,19 +99,15 @@ public class VoxReader {
                 } else stream.skipBytes(chunkSize);   // read any excess bytes
             }
 
-            if (voxelData==null || voxelData.nvoxels == 0) return data; // failed to read any valid voxel data
-
+            if (voxelBuffer==null || voxelBuffer.nvoxels == 0) return null; // failed to read any valid voxel data
+            VoxelData vd= new VoxelData(sizex,sizey,sizez);
             // now push the voxel data into our voxel chunk structure
-            for (int i = 0; i < voxelData.nvoxels; i++) {
-                // do not store this voxel if it lies out of range of the voxel chunk (32x128x32)
-                if (voxelData.x[i] > 31 || voxelData.y[i] > 31 || voxelData.z[i] > 127) continue;
-
-                // use the voxColors array by default, or overrideColor if it is available
-                int voxel = (voxelData.x[i] + voxelData.z[i] * 32 + voxelData.y[i] * 32 * 128);
-                data[voxel] = (colors == null ? voxColors[voxelData.color[i] - 1] : colors[voxelData.color[i] - 1]);
+            for (int i = 0; i < voxelBuffer.nvoxels; i++) {
+                int c=(colors == null ? voxColors[voxelBuffer.color[i] - 1] : colors[voxelBuffer.color[i] - 1]);
+                vd.setVoxelColor(voxelBuffer.x[i],voxelBuffer.y[i],voxelBuffer.z[i],c);
             }
+            return vd;
         }
-
-        return data;
+        return null;
     }
 }

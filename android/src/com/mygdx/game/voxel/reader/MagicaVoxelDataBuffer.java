@@ -3,14 +3,14 @@ package com.mygdx.game.voxel.reader;
 /**
  * Created by daely on 11/23/2016.
  */
-class MagicaVoxelData //struct in original C# code
+class MagicaVoxelDataBuffer //struct in original C# code
 {
     public int nvoxels;
     public byte[] x;
     public byte[] y;
     public byte[] z;
     public byte[] color;
-    public MagicaVoxelData(int nvoxels) {
+    public MagicaVoxelDataBuffer(int nvoxels) {
         this.nvoxels=nvoxels;
         x=new byte[nvoxels];
         y=new byte[nvoxels];
