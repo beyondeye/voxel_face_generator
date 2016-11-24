@@ -4,12 +4,12 @@ package com.mygdx.game.voxel.reader;
  * Created by daely on 11/23/2016.
  */
 
-public class VoxelData {
+public class VoxelGrid {
     static final int xMaxSize = 32;
     static final int zMaxSize = 128;
     static final int yMaxSize = 32;
     public final int xsize,ysize,zsize;
-    public VoxelData(int xsize,int ysize,int zsize) {
+    public VoxelGrid(int xsize, int ysize, int zsize) {
         this.xsize=xsize;
         this.ysize=ysize;
         this.zsize=zsize;
