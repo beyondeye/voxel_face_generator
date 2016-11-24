@@ -35,15 +35,33 @@ public class VoxelWorld implements RenderableProvider {
 
 	public final VoxelChunk[] chunks;
 	public final Mesh[] meshes;
-	public final Material[] materials;
+	public final Material[] materials_per_chunk;
 	public final boolean[] dirty;
 	public final int[] numVertices;
 	public float[] vertices;
+	/**
+	 * total number of basic blocks(chunks) in the X direction
+	 */
 	public final int chunksX;
+	/**
+	 * total number of basic blocks(chunks) in the Y direction
+	 */
 	public final int chunksY;
+	/**
+	 * total number of basic blocks(chunks) in the Z direction
+	 */
 	public final int chunksZ;
+	/**
+	 * total x pixel size of VoxelWorld
+	 */
 	public final int voxelsX;
+	/**
+	 * total y pixel size of VoxelWorld
+	 */
 	public final int voxelsY;
+	/**
+	 * total z pixel size of VoxelWorld
+	 */
 	public final int voxelsZ;
 	public int renderedChunks;
 	public int numChunks;
@@ -72,6 +90,7 @@ public class VoxelWorld implements RenderableProvider {
 		int len = CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z * 6 * 6 / 3;
 		short[] indices = new short[len];
 		short j = 0;
+		//meshes are the points of each square face for each block
 		for (i = 0; i < len; i += 6, j += 4) {
 			indices[i + 0] = (short)(j + 0);
 			indices[i + 1] = (short)(j + 1);
@@ -95,12 +114,13 @@ public class VoxelWorld implements RenderableProvider {
 			numVertices[i] = 0;
 
 		this.vertices = new float[VoxelChunk.VERTEX_SIZE * 6 * CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z];
-		this.materials = new Material[chunksX * chunksY * chunksZ];
-		for (i = 0; i < materials.length; i++) {
-			materials[i] = new Material(new ColorAttribute(ColorAttribute.Diffuse, MathUtils.random(0.5f, 1f), MathUtils.random(
+		this.materials_per_chunk = new Material[chunksX * chunksY * chunksZ];
+		for (i = 0; i < materials_per_chunk.length; i++) {
+			materials_per_chunk[i] = new Material(new ColorAttribute(ColorAttribute.Diffuse, MathUtils.random(0.5f, 1f), MathUtils.random(
 				0.5f, 1f), MathUtils.random(0.5f, 1f), 1));
 		}
 	}
+
 
 	public void set (float x, float y, float z, byte voxel) {
 		int ix = (int)x;
@@ -116,6 +136,7 @@ public class VoxelWorld implements RenderableProvider {
 			voxel);
 	}
 
+	//get the voxel type given some wold coordinates
 	public byte get (float x, float y, float z) {
 		int ix = (int)x;
 		int iy = (int)y;
@@ -192,7 +213,7 @@ public class VoxelWorld implements RenderableProvider {
 			}
 			if (numVertices[i] == 0) continue;
 			Renderable renderable = pool.obtain();
-			renderable.material = materials[i];
+			renderable.material = materials_per_chunk[i];
 			renderable.meshPart.mesh = mesh;
 			renderable.meshPart.offset = 0;
 			renderable.meshPart.size = numVertices[i];
