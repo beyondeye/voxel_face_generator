@@ -18,6 +18,9 @@ package com.mygdx.game.voxel;
 
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * structure representing a chunk of blocks from the voxel world
+ */
 public class VoxelChunk {
 	public static final int VERTEX_SIZE = 6;
 	public final byte[] voxels;
@@ -33,6 +36,12 @@ public class VoxelChunk {
 	private final int frontOffset;
 	private final int backOffset;
 
+	/**
+	 *
+	 * @param width in blocks
+	 * @param height in blocks
+	 * @param depth in blocks
+     */
 	public VoxelChunk (int width, int height, int depth) {
 		this.voxels = new byte[width * height * depth];
 		this.width = width;
@@ -47,6 +56,13 @@ public class VoxelChunk {
 		this.widthTimesHeight = width * height;
 	}
 
+	/**
+	 * get a block from the chunk, using relative coordinates
+	 * @param x
+	 * @param y
+	 * @param z
+     * @return the block type
+     */
 	public byte get (int x, int y, int z) {
 		if (x < 0 || x >= width) return 0;
 		if (y < 0 || y >= height) return 0;
