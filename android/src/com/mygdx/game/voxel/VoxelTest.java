@@ -17,6 +17,7 @@
 package com.mygdx.game.voxel;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,6 +32,9 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.GdxTest;
+import com.mygdx.game.voxel.reader.BinaryReader;
+import com.mygdx.game.voxel.reader.VoxReader;
+import com.mygdx.game.voxel.reader.VoxelData;
 
 public class VoxelTest extends GdxTest {
 	SpriteBatch spriteBatch;
@@ -59,6 +63,9 @@ public class VoxelTest extends GdxTest {
 
 		Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 		TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
+
+		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
+		VoxelData vox= VoxReader.fromMagica(new BinaryReader(vxf));
 
 		MathUtils.random.setSeed(0);
 		voxelWorld = new VoxelWorld(tiles[0], 20, 4, 20);

@@ -9,10 +9,15 @@ public class VoxelGrid {
     static final int zMaxSize = 128;
     static final int yMaxSize = 32;
     public final int xsize,ysize,zsize;
-    public VoxelGrid(int xsize, int ysize, int zsize) {
+    public VoxelGrid(int xsize, int ysize, int zsize,MagicaVoxelDataBuffer voxelBuffer,int[] voxColors) {
         this.xsize=xsize;
         this.ysize=ysize;
         this.zsize=zsize;
+        // now push the voxel data into our voxel chunk structure
+        for (int i = 0; i < voxelBuffer.nvoxels; i++) {
+            int c= voxColors[voxelBuffer.color[i]];
+            setVoxelColor(voxelBuffer.x[i],voxelBuffer.y[i],voxelBuffer.z[i],c);
+        }
     }
     private int[] data = new int[xMaxSize * zMaxSize * yMaxSize]; //TODO hardcoded buffer size!! for fastest voxel data access??
     public void setVoxelColor(int x, int y, int z, int color) {
