@@ -36,4 +36,5 @@ public class VoxelData {
             cmp[c].addVoxel(buffer.x[i],buffer.y[i],buffer.z[i]);
         }
     }
+    public int getNColors() { return dataPerColor.size(); }
 }

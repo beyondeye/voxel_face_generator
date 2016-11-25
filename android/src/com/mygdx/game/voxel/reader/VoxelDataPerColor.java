@@ -9,13 +9,13 @@ public class VoxelDataPerColor //struct in original C# code
     public byte[] x;
     public byte[] y;
     public byte[] z;
-    public int rgbacolor;
+    public int voxelrgbacolor;
     public VoxelDataPerColor(int nvoxels,int rgbacolor) {
         this.nvoxels=0;
         x=new byte[nvoxels];
         y=new byte[nvoxels];
         z=new byte[nvoxels];
-        this.rgbacolor=rgbacolor;
+        this.voxelrgbacolor =rgbacolor;
     }
 
     public void addVoxel(byte xp, byte yp, byte zp) {
