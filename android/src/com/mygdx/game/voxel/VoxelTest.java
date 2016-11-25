@@ -19,6 +19,7 @@ package com.mygdx.game.voxel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -78,7 +79,7 @@ public class VoxelTest extends GdxTest {
 
 		lights = new Environment();
 		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
-		lights.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
+		lights.add(new DirectionalLight().set(1f, 1f, 1f, 0, -1, 0));
 
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
@@ -91,7 +92,7 @@ public class VoxelTest extends GdxTest {
 		modelBuilder.begin();
 		for (int icolor = 0; icolor < vox.getNColors(); icolor++) {
 			VoxelDataPerColor curVoxData = vox.dataPerColor.get(icolor);
-			Material material = new Material(new ColorAttribute(ColorAttribute.Diffuse, new  com.badlogic.gdx.graphics.Color(curVoxData.voxelrgbacolor)));
+			Material material = new Material(ColorAttribute.createDiffuse(new Color(curVoxData.voxelrgbacolor)));
 			//TODO check which vertexatributes to use
 			MeshPartBuilder meshBuilder = modelBuilder.part(
 					"color"+icolor,
