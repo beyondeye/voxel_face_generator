@@ -45,7 +45,7 @@ public class VoxReader {
 /// <param name="overrideColors">Optional color lookup table for converting RGB values into my internal engine color format.</param>
 /// <returns>The voxel chunk data for the MagicaVoxel .vox file. in a buffer of isze(32(x)*128(z)*32(y))
 // </returns>
-    public static VoxelData fromMagica(BinaryReader stream) {
+    public static VoxelData fromMagica(BinaryReader stream, int[] defaultRGBAVoxPalette) {
         // check out http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=Home for the file format used below
         // we're going to return a voxel chunk worth of data
         int[] rgbacolors = null;
@@ -104,7 +104,9 @@ public class VoxReader {
                     }
                 } else stream.skipBytes(chunkSize);   // read any excess bytes
             }
-            if(rgbacolors==null) rgbacolors= voxRGBAColors;
+            if(rgbacolors==null) {
+                rgbacolors= (defaultRGBAVoxPalette!=null)? defaultRGBAVoxPalette : voxRGBAColors;
+            }
             //VoxelGrid vd= new VoxelGrid(sizex,sizey,sizez,voxelBuffer,colors);
             VoxelData vd= new VoxelData(sizex,sizey,sizez,voxelBuffer,rgbacolors);
             return vd;

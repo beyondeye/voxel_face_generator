@@ -22,6 +22,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -96,10 +97,11 @@ public class VoxelTest extends GdxTest {
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
 		String voxpath="data/vox/";
-		VoxelData vox1 = getVoxelData(voxpath, "face1_thick.vox");
-		VoxelData vox2 = getVoxelData(voxpath, "hair0_thick.vox");
-		VoxelData vox3 = getVoxelData(voxpath, "eyes0.vox");
-		VoxelData vox4 = getVoxelData(voxpath, "mouth0.vox");
+		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
+		VoxelData vox1 = getVoxelData(voxpath, defaultRGBAVoxPalette,"face1_thick.vox");
+		VoxelData vox2 = getVoxelData(voxpath, defaultRGBAVoxPalette,"hair0_thick.vox");
+		VoxelData vox3 = getVoxelData(voxpath, defaultRGBAVoxPalette,"eyes0.vox");
+		VoxelData vox4 = getVoxelData(voxpath, defaultRGBAVoxPalette,"mouth0.vox");
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
 		ModelBuilder modelBuilder=new ModelBuilder();
@@ -125,9 +127,18 @@ public class VoxelTest extends GdxTest {
 		*/
 	}
 
-	private VoxelData getVoxelData(String voxpath, String voxname) {
+	private VoxelData getVoxelData(String voxpath, int[] defaultRGBAVoxPalette, String voxname) {
 		FileHandle vxf1= Gdx.files.internal(voxpath+ voxname);
-		return VoxReader.fromMagica(new BinaryReader(vxf1));
+		return VoxReader.fromMagica(new BinaryReader(vxf1),defaultRGBAVoxPalette);
+	}
+	private int[] getRGBAVoxelPalette(String voxpath, String voxpalettename) {
+		FileHandle vxf1= Gdx.files.internal(voxpath+ voxpalettename);
+		Pixmap pixmap= new Pixmap(vxf1);
+		int[] res= new int[256];
+		for (int i = 0; i < 256; i++) {
+			res[i]=pixmap.getPixel(i,0);
+		}
+		return res;
 	}
 
 	private void addWhiteBackground(ModelBuilder modelBuilder) {
