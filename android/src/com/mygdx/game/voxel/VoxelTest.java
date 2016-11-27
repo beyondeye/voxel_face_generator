@@ -31,12 +31,10 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
@@ -97,12 +95,42 @@ public class VoxelTest extends GdxTest {
 
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
-		FileHandle vxf=Gdx.files.internal("data/vox/hair0_thick.vox");
-		VoxelData vox= VoxReader.fromMagica(new BinaryReader(vxf));
+		String voxpath="data/vox/";
+		VoxelData vox1 = getVoxelData(voxpath, "face1_thick.vox");
+		VoxelData vox2 = getVoxelData(voxpath, "hair0_thick.vox");
+		VoxelData vox3 = getVoxelData(voxpath, "eyes0.vox");
+		VoxelData vox4 = getVoxelData(voxpath, "mouth0.vox");
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
 		ModelBuilder modelBuilder=new ModelBuilder();
 		modelBuilder.begin();
+		addWhiteBackground(modelBuilder);
+
+		addVoxModelPart(modelBuilder, vox1);
+		addVoxModelPart(modelBuilder, vox2);
+		addVoxModelPart(modelBuilder, vox3);
+		addVoxModelPart(modelBuilder, vox4);
+		Model model = modelBuilder.end();
+		ModelInstance instance = new ModelInstance(model);
+		models.add(model);
+		instances.add(instance);
+
+		/*instance.calculateBoundingBox(bounds);
+		cam.position.set(1, 1, 1).nor().scl(bounds.getDimensions(tmpV1).len() * 0.75f + bounds.getCenter(tmpV2).len());
+		cam.up.set(0, 0, 1);
+		cam.lookAt(16f, 16f, 16f);
+		cam.far = 50f + bounds.getDimensions(tmpV1).len() * 2.0f;
+		cam.update();
+		//cam.position.set(camX, camY, camZ);
+		*/
+	}
+
+	private VoxelData getVoxelData(String voxpath, String voxname) {
+		FileHandle vxf1= Gdx.files.internal(voxpath+ voxname);
+		return VoxReader.fromMagica(new BinaryReader(vxf1));
+	}
+
+	private void addWhiteBackground(ModelBuilder modelBuilder) {
 		Material bgMaterial = new Material(ColorAttribute.createDiffuse(new Color(1.0f,1.0f,1.0f,1.0f)));
 		MeshPartBuilder bgMeshBuilder = modelBuilder.part(
 				"bg",
@@ -110,7 +138,9 @@ public class VoxelTest extends GdxTest {
 				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
 				bgMaterial);
 		BoxShapeBuilder.build(bgMeshBuilder, 16f, 64f, 16f, 200f, 10f, 200f); //a large white background
+	}
 
+	private void addVoxModelPart(ModelBuilder modelBuilder, VoxelData vox) {
 		for (int icolor = 0; icolor < vox.getNColors(); icolor++) {
 			VoxelDataPerColor curVoxData = vox.dataPerColor.get(icolor);
 			Material material = new Material(ColorAttribute.createDiffuse(new Color(curVoxData.voxelrgbacolor)));
@@ -130,19 +160,6 @@ public class VoxelTest extends GdxTest {
 
 			}
 		}
-		Model model = modelBuilder.end();
-		ModelInstance instance = new ModelInstance(model);
-		models.add(model);
-		instances.add(instance);
-
-		/*instance.calculateBoundingBox(bounds);
-		cam.position.set(1, 1, 1).nor().scl(bounds.getDimensions(tmpV1).len() * 0.75f + bounds.getCenter(tmpV2).len());
-		cam.up.set(0, 0, 1);
-		cam.lookAt(16f, 16f, 16f);
-		cam.far = 50f + bounds.getDimensions(tmpV1).len() * 2.0f;
-		cam.update();
-		//cam.position.set(camX, camY, camZ);
-		*/
 	}
 
 	@Override
