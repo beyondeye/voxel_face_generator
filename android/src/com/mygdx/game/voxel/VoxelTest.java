@@ -84,7 +84,9 @@ public class VoxelTest extends GdxTest {
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
 
-		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
+//		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
+//		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
+		FileHandle vxf=Gdx.files.internal("data/vox/hair0_thick.vox");
 		VoxelData vox= VoxReader.fromMagica(new BinaryReader(vxf));
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
