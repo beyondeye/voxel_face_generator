@@ -32,12 +32,16 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.GdxTest;
 import com.mygdx.game.voxel.reader.BinaryReader;
@@ -55,10 +59,13 @@ public class VoxelTest extends GdxTest {
 	ModelBatch modelBatch;
 	PerspectiveCamera cam;
 	Environment lights;
-	FirstPersonCameraController controller;
+	CameraInputController controller;
 //	VoxelWorld voxelWorld;
 	public Array<ModelInstance> instances = new Array<ModelInstance>();
 	public Array<Model> models = new Array<Model>();
+
+	private final Vector3 tmpV1 = new Vector3(), tmpV2 = new Vector3();
+	private final BoundingBox bounds = new BoundingBox();
 
 	@Override
 	public void create () {
@@ -68,18 +75,22 @@ public class VoxelTest extends GdxTest {
 		DefaultShader.Config config = new DefaultShader.Config();
 	//	config.defaultCullFace=GL20.GL_FRONT;
 		modelBatch = new ModelBatch(new DefaultShaderProvider(config)); //create a model batch with specified shader config
-		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cam = new PerspectiveCamera(45, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.near = 0.1f;
 		cam.far = 1000;
-		cam.position.set(16f, 0f, 16f);
+		cam.position.set(16f, -32f, 16f);
 		cam.lookAt(16f, 16f, 16f);
 		cam.update();
-		controller = new FirstPersonCameraController(cam);
+//		controller = new FirstPersonCameraController(cam);
+		controller = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(controller);
 
 		lights = new Environment();
-		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
-		lights.add(new DirectionalLight().set(1f, 1f, 1f, 0, -1, 0));
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1.f));
+		lights.add( new PointLight().set(1f, 1f, 1f, 64f, -64f, 64f, 100f));
+//		lights.add(new DirectionalLight().set(1f, 1f, 1f, 16f, -10f, 16f));
+//		lights.add( new DirectionalLight().set(0.8f, 0.2f, 0.2f, -1f, -2f, -0.5f));
+//		lights.add( new PointLight().set(0.8f, 0.8f, 0.8f, 30f, -10f, 16f, 100f));
 
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
@@ -92,6 +103,14 @@ public class VoxelTest extends GdxTest {
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
 		ModelBuilder modelBuilder=new ModelBuilder();
 		modelBuilder.begin();
+		Material bgMaterial = new Material(ColorAttribute.createDiffuse(new Color(1.0f,1.0f,1.0f,1.0f)));
+		MeshPartBuilder bgMeshBuilder = modelBuilder.part(
+				"bg",
+				GL20.GL_TRIANGLES,
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
+				bgMaterial);
+		BoxShapeBuilder.build(bgMeshBuilder, 16f, 64f, 16f, 200f, 10f, 200f); //a large white background
+
 		for (int icolor = 0; icolor < vox.getNColors(); icolor++) {
 			VoxelDataPerColor curVoxData = vox.dataPerColor.get(icolor);
 			Material material = new Material(ColorAttribute.createDiffuse(new Color(curVoxData.voxelrgbacolor)));
@@ -108,13 +127,22 @@ public class VoxelTest extends GdxTest {
 				float z = curVoxData.z[iv] * boxdepth;
 
 				BoxShapeBuilder.build(meshBuilder, x, y, z, boxwidth, boxheight, boxdepth);
+
 			}
 		}
 		Model model = modelBuilder.end();
 		ModelInstance instance = new ModelInstance(model);
 		models.add(model);
 		instances.add(instance);
+
+		/*instance.calculateBoundingBox(bounds);
+		cam.position.set(1, 1, 1).nor().scl(bounds.getDimensions(tmpV1).len() * 0.75f + bounds.getCenter(tmpV2).len());
+		cam.up.set(0, 0, 1);
+		cam.lookAt(16f, 16f, 16f);
+		cam.far = 50f + bounds.getDimensions(tmpV1).len() * 2.0f;
+		cam.update();
 		//cam.position.set(camX, camY, camZ);
+		*/
 	}
 
 	@Override
