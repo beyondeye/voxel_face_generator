@@ -313,7 +313,7 @@ public class ShaderCollectionTest extends BaseG3dHudTest {
 				}
 			}
 		});
-		shadersWindow = addListWindow("Shaders", shadersList, -1, -1);
+		shadersWindow = addListWindow("Shaders", shadersList, -1, -20);
 
 		final List<String> materialsList = new List(skin);
 		materialsList.setItems(materials);
@@ -326,7 +326,7 @@ public class ShaderCollectionTest extends BaseG3dHudTest {
 				}
 			}
 		});
-		materialsWindow = addListWindow("Materials", materialsList, modelsWindow.getWidth(), -1);
+		materialsWindow = addListWindow("Materials", materialsList, modelsWindow.getWidth(), -20);
 
 		final List<String> environmentsList = new List(skin);
 		environmentsList.setItems(environments);
@@ -339,7 +339,7 @@ public class ShaderCollectionTest extends BaseG3dHudTest {
 				}
 			}
 		});
-		environmentsWindow = addListWindow("Environments", environmentsList, materialsWindow.getRight(), -1);
+		environmentsWindow = addListWindow("Environments", environmentsList, materialsWindow.getRight(), -20);
 	}
 
 	protected void switchAnimation () {

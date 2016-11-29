@@ -255,7 +255,7 @@ public class VoxelTestWithMergedLightsText extends GdxTest {
 				}
 			}
 		});
-		modelsWindow = addListWindow("Models", modelsList, 0, -1);
+		modelsWindow = addListWindow("Models", modelsList, 0, -20);
 
 		fpsLabel = new Label("FPS: 999", skin);
 		hud.addActor(fpsLabel);

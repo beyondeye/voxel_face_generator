@@ -82,7 +82,7 @@ public abstract class BaseG3dHudTest extends BaseG3dTest {
 				}
 			}
 		});
-		modelsWindow = addListWindow("Models", modelsList, 0, -1);
+		modelsWindow = addListWindow("Models", modelsList, 0, -20);
 
 		fpsLabel = new Label("FPS: 999", skin);
 		hud.addActor(fpsLabel);
