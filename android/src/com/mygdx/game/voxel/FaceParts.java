@@ -13,6 +13,28 @@ import java.util.ArrayList;
 /**
  * Created by daely on 11/28/2016.
  */
+//TODO add three possible rotations
+//TODO generate face background programmatically
+    //TODO separate hair and hat block: each block that can have variable color should be independent
+    //TODO single block depth for faces for saving memory: in fondo sono delle maschere!!
+    //TODO put fragment in framelayout below another view
+    //BLOCKS: eye block (with color)
+    //??guancette rosse block
+    //face shape block (with color)
+    //bocca (with color)
+    //ciglia (with color)
+    //tatuaggio in faccia (with color)
+    //capelli (uomo/donna
+    //cappelli trecce
+    //capelli basette
+    //vestito (uomo donna) e colore
+    //mano che tiene cose
+    //ali bloc
+    //cravatta block (con colore)
+    //orecchini block (con colore)
+    //occhiali block
+    //animaletto block
+    //cappello block
 
 public class FaceParts {
     String basePath;
