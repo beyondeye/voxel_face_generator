@@ -45,7 +45,7 @@ public class FaceParts {
     public FaceParts(String basePath) {
         this.basePath=basePath;
         rand = null;
-        idDigestMode=0;
+        idDigestMode=1; //MD5
         partCounts=new ArrayList<>();
         partNames = new ArrayList<>();
     }
