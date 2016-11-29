@@ -94,6 +94,7 @@ public class VoxelTest extends GdxTest {
 		*/
 		FaceParts faceParts=new FaceParts(voxpath);
 		faceParts.addPart("nface",8);
+		faceParts.addPart("nmouth",2);
 		faceParts.addPart("neyes",14);
 		faceParts.addPart("neyebrows",8);
 		faceParts.addPart("nhair",8);
@@ -131,7 +132,7 @@ public class VoxelTest extends GdxTest {
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
 
-		VoxelData[] voxparts=faceParts.getFaceParts("a12a643");
+		VoxelData[] voxparts=faceParts.getFaceParts("2");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
 //		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
