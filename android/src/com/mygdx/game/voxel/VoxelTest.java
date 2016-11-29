@@ -18,6 +18,7 @@ package com.mygdx.game.voxel;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,6 +34,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
@@ -62,9 +64,10 @@ public class VoxelTest extends GdxTest {
 	PerspectiveCamera cam;
 	Environment lights;
 	CameraInputController controller;
+	public AssetManager assets;
 //	VoxelWorld voxelWorld;
-	public Array<ModelInstance> instances = new Array<ModelInstance>();
-	public Array<Model> models = new Array<Model>();
+	public Array<ModelInstance> instances = null;
+	public Array<Model> models = null;
 
 	private final Vector3 tmpV1 = new Vector3(), tmpV2 = new Vector3();
 	private final BoundingBox bounds = new BoundingBox();
@@ -97,6 +100,11 @@ public class VoxelTest extends GdxTest {
 
 		spriteBatch = new SpriteBatch();
 		font = new BitmapFont();
+
+		instances = new Array<ModelInstance>();
+		models = new Array<Model>();
+		if (assets == null) assets = new AssetManager();
+
 		//see https://github.com/libgdx/libgdx/wiki/ModelBatch
 		DefaultShader.Config config = new DefaultShader.Config();
 	//	config.defaultCullFace=GL20.GL_FRONT;
@@ -114,6 +122,8 @@ public class VoxelTest extends GdxTest {
 		lights = new Environment();
 		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1.f));
 		lights.add( new PointLight().set(1f, 1f, 1f, 64f, -64f, 64f, 100f));
+		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -0.5f, -1.0f, -0.8f));
+
 //		lights.add(new DirectionalLight().set(1f, 1f, 1f, 16f, -10f, 16f));
 //		lights.add( new DirectionalLight().set(0.8f, 0.2f, 0.2f, -1f, -2f, -0.5f));
 //		lights.add( new PointLight().set(0.8f, 0.8f, 0.8f, 30f, -10f, 16f, 100f));
@@ -121,7 +131,7 @@ public class VoxelTest extends GdxTest {
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
 
-		VoxelData[] voxparts=faceParts.getFaceParts("a12643");
+		VoxelData[] voxparts=faceParts.getFaceParts("a12a643");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
 //		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
@@ -131,10 +141,16 @@ public class VoxelTest extends GdxTest {
 //		VoxelData vox4 = getVoxelData(voxpath, defaultRGBAVoxPalette,"mouth0.vox");
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
+		ModelBuilder bgmodelBuilder=new ModelBuilder();
+		bgmodelBuilder.begin();
+		addWhiteBackground(bgmodelBuilder);
+		Model bgmodel = bgmodelBuilder.end();
+		ModelInstance bginstance = new ModelInstance(bgmodel);
+		models.add(bgmodel);
+		instances.add(bginstance);
+
 		ModelBuilder modelBuilder=new ModelBuilder();
 		modelBuilder.begin();
-		addWhiteBackground(modelBuilder);
-
 		for (int i = 0; i < voxparts.length; i++) {
 			addVoxModelPart(modelBuilder,voxparts[i]);
 		}
@@ -143,6 +159,12 @@ public class VoxelTest extends GdxTest {
 		models.add(model);
 		instances.add(instance);
 
+		String materials[] = new String[] {"diffuse_green", "badlogic_normal", "brick01", "brick02", "brick03",
+				"chesterfield", "cloth01", "cloth02", "elephant01", "elephant02", "fur01", "grass01", "metal01", "metal02", "mirror01",
+				"mirror02", "moon01", "plastic01", "stone01", "stone02", "wood01", "wood02"};
+
+		//setMaterial("cloth01");
+//		setMaterial("chesterfield");
 		//TODO: check documentation of turning on/off continuous renedering
 		//Continuous & non continuous rendering · libgdx/libgdx Wiki
 		//https://github.com/libgdx/libgdx/wiki/Continuous-%26-non-continuous-rendering
@@ -156,6 +178,46 @@ public class VoxelTest extends GdxTest {
 		cam.update();
 		//cam.position.set(camX, camY, camZ);
 		*/
+	}
+
+	String currentMaterial=null;
+	String currentlyLoading=null;
+	boolean loadingMaterial=false;
+	private void setMaterial(String name) {
+		if (name == null) return;
+		if (currentlyLoading != null) {
+			Gdx.app.error("ModelTest", "Wait for the current model/material to be loaded.");
+			return;
+		}
+
+		currentlyLoading = "data/g3d/materials/" + name + ".g3dj";
+		loadingMaterial = true;
+		if (!name.equals(currentMaterial)) assets.load(currentlyLoading, Model.class);
+		loading = true;
+	}
+	boolean loading=false;
+	private void onLoaded() {
+		if (currentlyLoading == null || currentlyLoading.length() == 0) return;
+
+		if (loadingMaterial) {
+			loadingMaterial = false;
+			if (currentMaterial != null && !currentMaterial.equals(currentlyLoading)) assets.unload(currentMaterial);
+			currentMaterial = currentlyLoading;
+			currentlyLoading = null;
+			for (int i = 1; i < instances.size; i++) { //start from 1: skip bg model instance
+				ModelInstance instance=instances.get(i);
+				if (instance != null) {
+					Array<Material> materials= instance.materials;
+					for (int j = 0; j < materials.size; j++) {
+						Material mat=instance.materials.get(j);
+						mat.clear();
+						mat.set(assets.get(currentMaterial, Model.class).materials.get(0));
+
+					}
+				}
+
+			}
+		}
 	}
 
 	private VoxelData getVoxelData(String voxpath, int[] defaultRGBAVoxPalette, String voxname) {
@@ -218,6 +280,10 @@ public class VoxelTest extends GdxTest {
 
 	@Override
 	public void render () {
+		if (loading && assets.update()) {
+			loading = false;
+			onLoaded();
+		}
 		//Gdx.gl.glClearColor(0.4f, 0.4f, 0.4f, 1f);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -232,6 +298,8 @@ public class VoxelTest extends GdxTest {
 		spriteBatch.end();
 	}
 
+
+
 	@Override
 	public void resize (int width, int height) {
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
@@ -243,9 +311,9 @@ public class VoxelTest extends GdxTest {
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
-		for (int i = 0; i < models.size; i++) {
-			models.get(i).dispose();
-		}
-		models.clear();
+		assets.dispose();
+		assets = null;
+		models=null;
+		instances=null;
 	}
 }
