@@ -46,6 +46,8 @@ public class FaceParts {
         this.basePath=basePath;
         rand = null;
         idDigestMode=0;
+        partCounts=new ArrayList<>();
+        partNames = new ArrayList<>();
     }
 
     /**

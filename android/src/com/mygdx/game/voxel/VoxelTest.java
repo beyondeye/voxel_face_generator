@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -42,6 +43,8 @@ import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.BoxShapeBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.GdxTest;
 import com.mygdx.game.voxel.reader.BinaryReader;
 import com.mygdx.game.voxel.reader.VoxReader;
@@ -68,6 +71,30 @@ public class VoxelTest extends GdxTest {
 
 	@Override
 	public void create () {
+		String voxpath="data/vox/";
+		/*
+		FileHandle[] files = Gdx.files.internal(voxpath).list();
+		for(FileHandle file: files) {
+			if(!file.extension().equals("vox")) continue;
+			String nameNoExt=file.nameWithoutExtension();
+			String name_no_num=null;
+			for (int i = nameNoExt.length()-1; i >=0; i++) {
+				if(!Character.isDigit(nameNoExt.charAt(i))) {
+					name_no_num = nameNoExt.substring(0,i);
+					break;
+				}
+			}
+			int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,name_no_num+"_palette.png");
+			VoxelData vox = getVoxelData(voxpath, defaultRGBAVoxPalette,file.name());
+			saveCompressedVox(vox,"")
+		}
+		*/
+		FaceParts faceParts=new FaceParts(voxpath);
+		faceParts.addPart("nface",8);
+		faceParts.addPart("neyes",14);
+		faceParts.addPart("neyebrows",8);
+		faceParts.addPart("nhair",8);
+
 		spriteBatch = new SpriteBatch();
 		font = new BitmapFont();
 		//see https://github.com/libgdx/libgdx/wiki/ModelBatch
@@ -94,28 +121,32 @@ public class VoxelTest extends GdxTest {
 	//	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
 	//	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
 
+		VoxelData[] voxparts=faceParts.getFaceParts("a12643");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
-		String voxpath="data/vox/";
-		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
-		VoxelData vox1 = getVoxelData(voxpath, defaultRGBAVoxPalette,"face1_thick.vox");
-		VoxelData vox2 = getVoxelData(voxpath, defaultRGBAVoxPalette,"hair0_thick.vox");
-		VoxelData vox3 = getVoxelData(voxpath, defaultRGBAVoxPalette,"eyes0.vox");
-		VoxelData vox4 = getVoxelData(voxpath, defaultRGBAVoxPalette,"mouth0.vox");
+//		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
+//		VoxelData vox1 = getVoxelData(voxpath, defaultRGBAVoxPalette,"face1_thick.vox");
+//		VoxelData vox2 = getVoxelData(voxpath, defaultRGBAVoxPalette,"hair0_thick.vox");
+//		VoxelData vox3 = getVoxelData(voxpath, defaultRGBAVoxPalette,"eyes0.vox");
+//		VoxelData vox4 = getVoxelData(voxpath, defaultRGBAVoxPalette,"mouth0.vox");
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
 		ModelBuilder modelBuilder=new ModelBuilder();
 		modelBuilder.begin();
 		addWhiteBackground(modelBuilder);
 
-		addVoxModelPart(modelBuilder, vox1);
-		addVoxModelPart(modelBuilder, vox2);
-		addVoxModelPart(modelBuilder, vox3);
-		addVoxModelPart(modelBuilder, vox4);
+		for (int i = 0; i < voxparts.length; i++) {
+			addVoxModelPart(modelBuilder,voxparts[i]);
+		}
 		Model model = modelBuilder.end();
 		ModelInstance instance = new ModelInstance(model);
 		models.add(model);
 		instances.add(instance);
+
+		//TODO: check documentation of turning on/off continuous renedering
+		//Continuous & non continuous rendering · libgdx/libgdx Wiki
+		//https://github.com/libgdx/libgdx/wiki/Continuous-%26-non-continuous-rendering
+
 
 		/*instance.calculateBoundingBox(bounds);
 		cam.position.set(1, 1, 1).nor().scl(bounds.getDimensions(tmpV1).len() * 0.75f + bounds.getCenter(tmpV2).len());
@@ -139,6 +170,18 @@ public class VoxelTest extends GdxTest {
 			res[i]=pixmap.getPixel(i,0);
 		}
 		return res;
+	}
+
+
+	/**
+	 * from https://github.com/libgdx/libgdx/wiki/Taking-a-Screenshot
+	 */
+	void takeScreenShot() {
+		byte[] pixels = ScreenUtils.getFrameBufferPixels(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), true);
+		Pixmap pixmap = new Pixmap(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), Pixmap.Format.RGBA8888);
+		BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
+		PixmapIO.writePNG(Gdx.files.external("mypixmap.png"), pixmap);
+		pixmap.dispose();
 	}
 
 	private void addWhiteBackground(ModelBuilder modelBuilder) {
