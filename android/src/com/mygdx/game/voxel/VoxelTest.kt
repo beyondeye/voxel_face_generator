@@ -218,7 +218,7 @@ class VoxelTest(val id: String) : GdxTest() {
         }
     }
 
-    private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData {
+    private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData? {
         val vxf1 = Gdx.files.internal(voxpath + voxname)
         return VoxReader.fromMagica(BinaryReader(vxf1), defaultRGBAVoxPalette)
     }
