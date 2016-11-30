@@ -34,8 +34,8 @@ object VoxReader {
         var rgbacolors: IntArray? = null
         var voxelBuffer: MagicaVoxelDataBuffer? = null
 
-        val magic = stream.ReadChars(4)
-        val version = stream.ReadInt32()
+        val magic = stream.readChars(4)
+        val version = stream.readInt32()
 
         // a MagicaVoxel .vox file starts with a 'magic' 4 character 'VOX ' identifier
         if (magic == "VOX ") {
@@ -46,25 +46,25 @@ object VoxReader {
 
             while (stream.position < stream.length) {
                 // each chunk has an ID, size and child chunks
-                val chunkName = stream.ReadChars(4)
-                val chunkSize = stream.ReadInt32()
-                val childChunks = stream.ReadInt32()
+                val chunkName = stream.readChars(4)
+                val chunkSize = stream.readInt32()
+                val childChunks = stream.readInt32()
 
                 if (chunkName == "PACK") {
-                    val numModels = stream.ReadInt32() //num of SIZE and XYZI chunks
+                    val numModels = stream.readInt32() //num of SIZE and XYZI chunks
                     if (numModels != 1) throw IllegalArgumentException("reading vox file with multiple models not supported")
                     stream.skipBytes(chunkSize - 4)
                 } else if (chunkName == "SIZE") {
-                    sizex = stream.ReadInt32()
-                    sizey = stream.ReadInt32()
-                    sizez = stream.ReadInt32()
+                    sizex = stream.readInt32()
+                    sizey = stream.readInt32()
+                    sizez = stream.readInt32()
 
                     if (sizex > 32 || sizey > 32) subsample = true
 
                     stream.skipBytes(chunkSize - 4 * 3)
                 } else if (chunkName == "XYZI") {
                     // XYZI contains n voxels
-                    val numVoxels = stream.ReadInt32()
+                    val numVoxels = stream.readInt32()
                     val div = if (subsample) 2 else 1
 
                     // each voxel has x, y, z and color index values
@@ -75,10 +75,10 @@ object VoxReader {
                     rgbacolors = IntArray(256)
 
                     for (i in 0..255) {
-                        val r = stream.ReadByte().toInt() and 0xff
-                        val g = stream.ReadByte().toInt() and 0xff
-                        val b = stream.ReadByte().toInt() and 0xff
-                        val a = stream.ReadByte().toInt() and 0xff
+                        val r = stream.readByte().toInt() and 0xff
+                        val g = stream.readByte().toInt() and 0xff
+                        val b = stream.readByte().toInt() and 0xff
+                        val a = stream.readByte().toInt() and 0xff
 
                         // convert RGBA to our custom voxel format (16 bits, 0RRR RRGG GGGB BBBB)
                         //colors[i] = (short) (((r & 0x1f) << 10) | ((g & 0x1f) << 5) | (b & 0x1f));

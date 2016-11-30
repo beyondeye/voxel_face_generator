@@ -26,7 +26,7 @@ class BinaryReader(fh: FileHandle) {
         this.rs = DataInputStream(ByteArrayInputStream(bytes))
     }
 
-    fun ReadByte(): Byte {
+    fun readByte(): Byte {
         try {
             position += 1
             return rs.read().toByte()
@@ -36,7 +36,7 @@ class BinaryReader(fh: FileHandle) {
 
     }
 
-    fun ReadInt32(): Int {
+    fun readInt32(): Int {
         try {
             position += 4
             val ch1 = rs.read()
@@ -53,7 +53,7 @@ class BinaryReader(fh: FileHandle) {
 
     }
 
-    fun ReadChars(i: Int): String {
+    fun readChars(i: Int): String {
         var i = i
         val sb = StringBuilder(i)
         try {
@@ -68,7 +68,7 @@ class BinaryReader(fh: FileHandle) {
         return sb.toString()
     }
 
-    fun ReadBytes(i: Int): ByteArray {
+    fun readBytes(i: Int): ByteArray {
         position += i
         val res = ByteArray(i)
         try {
