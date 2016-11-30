@@ -36,17 +36,26 @@ import java.util.ArrayList
 //animaletto block
 //cappello block
 
-class FaceParts(internal var basePath: String) {
-    internal var partNames: ArrayList<String>
-    internal var partCounts: ArrayList<Int>
+class FaceParts(val voxels:Array<VoxelData>,val rot:Pair<Float,Float>)
+
+class FacePartsGenerator(internal var basePath: String) {
+    companion object {
+        private val phiThetaRotPartName = "PhiThetaRotation"
+    }
+    internal val partNames: ArrayList<String>
+    internal val partCounts: ArrayList<Int>
+    internal val rots:ArrayList<Pair<Float,Float>>
     internal var rand: MersenneTwisterFast? = null
     internal var idDigestMode: Int = 0
+
 
     init {
         rand = null
         idDigestMode = 1 //MD5
         partCounts = ArrayList<Int>()
         partNames = ArrayList<String>()
+        rots=ArrayList<Pair<Float,Float>>()
+        addPart(phiThetaRotPartName,0)
     }
 
     /**
@@ -59,21 +68,26 @@ class FaceParts(internal var basePath: String) {
         partNames.add(name)
         partCounts.add(count)
     }
+    fun addPhiThetaRot(phiRot:Float,thetaRot:Float) {
+        rots.add(Pair(phiRot,thetaRot))
+        partCounts[0]+=1
+    }
 
     fun nParts(): Int {
         return partCounts.size
     }
 
-    fun getFaceParts(id: String): Array<VoxelData>? {
+    fun getFaceParts(id: String): FaceParts? {
         val selectedParts = getFacePartIdxFromId(id) ?: return null
         val nparts = nParts()
-        val res = Array<VoxelData>(nparts) { ipart ->
-            val pn = partNames[ipart]
+        val rot=rots[selectedParts[0]] //first part is always the rotation
+        val voxels = Array<VoxelData>(nparts-1) { ipart ->
+            val pn = partNames[ipart+1] //skip the first ipart that is the rotation
             val defaultRGBAVoxPalette = getRGBAVoxelPalette(basePath, pn + "_palette.png") ?: return null
-            val vox = getVoxelData(basePath, defaultRGBAVoxPalette, pn + selectedParts[ipart] + ".vox") ?: return null
+            val vox = getVoxelData(basePath, defaultRGBAVoxPalette, pn + selectedParts[ipart+1] + ".vox") ?: return null
             vox
         }
-        return res
+        return FaceParts(voxels,rot)
     }
 
     private fun getFacePartIdxFromId(id: String): IntArray? {
@@ -140,4 +154,5 @@ class FaceParts(internal var basePath: String) {
         }
         return res
     }
+
 }

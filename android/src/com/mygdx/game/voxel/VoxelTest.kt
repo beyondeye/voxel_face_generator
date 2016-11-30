@@ -89,12 +89,21 @@ class VoxelTest(val id: String) : GdxTest() {
 			saveCompressedVox(vox,"")
 		}
 		*/
-        val faceParts = FaceParts(voxpath)
-        faceParts.addPart("nface", 8)
-        faceParts.addPart("nmouth", 2)
-        faceParts.addPart("neyes", 14)
-        faceParts.addPart("neyebrows", 8)
-        faceParts.addPart("nhair", 8)
+        val facePartsGen = FacePartsGenerator(voxpath)
+        facePartsGen.addPart("nface", 8)
+        facePartsGen.addPart("nmouth", 2)
+        facePartsGen.addPart("neyes", 14)
+        facePartsGen.addPart("neyebrows", 8)
+        facePartsGen.addPart("nhair", 8)
+        val phirot = 25f
+        val thetarot = 25f
+        facePartsGen.addPhiThetaRot(0f,0f)
+        facePartsGen.addPhiThetaRot(phirot,thetarot)
+        facePartsGen.addPhiThetaRot(-phirot,thetarot)
+
+        val faceparts = facePartsGen.getFaceParts(id)
+        if(faceparts==null) return
+        val camerarot=faceparts.rot
 
         spriteBatch = SpriteBatch()
         font = BitmapFont()
@@ -107,12 +116,7 @@ class VoxelTest(val id: String) : GdxTest() {
         val config = DefaultShader.Config()
         //	config.defaultCullFace=GL20.GL_FRONT;
         modelBatch = ModelBatch(DefaultShaderProvider(config)) //create a model batch with specified shader config
-        cam = PerspectiveCamera(45f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        cam.near = 0.1f
-        cam.far = 1000f
-        cam.position.set(16f, -32f, 16f)
-        cam.lookAt(16f, 16f, 16f)
-        cam.update()
+        setCameraPosition(camerarot.first, camerarot.second)
         //		controller = new FirstPersonCameraController(cam);
         controller = CameraInputController(cam)
         Gdx.input.inputProcessor = controller
@@ -129,8 +133,7 @@ class VoxelTest(val id: String) : GdxTest() {
         //	Texture texture = new Texture(Gdx.files.internal("data/g3d/tiles.png"));
         //	TextureRegion[][] tiles = TextureRegion.split(texture, 32, 32);
 
-        val voxparts = faceParts.getFaceParts(id)
-        if(voxparts==null) return
+        val voxparts=faceparts.voxels
         //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
         //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
         //		int[] defaultRGBAVoxPalette= getRGBAVoxelPalette(voxpath,"face1_thick_palette.png");
@@ -175,6 +178,25 @@ class VoxelTest(val id: String) : GdxTest() {
 		cam.update();
 		//cam.position.set(camX, camY, camZ);
 		*/
+    }
+
+    private fun setCameraPosition(phiRotation: Float, thetaRotation: Float) {
+        val camFoV = 45f
+        cam = PerspectiveCamera(camFoV, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        cam.near = 0.1f
+        cam.far = 1000f
+        val faceCenter = Vector3(15.5f, 15.5f, 18.0f)
+        val camPosition = Vector3(faceCenter).add(0f, -48f, 0f)
+        cam.position.set(camPosition)
+        cam.lookAt(faceCenter)
+        cam.rotateAround(faceCenter, Vector3.Z, phiRotation) //45 degress
+        val p = Vector3(faceCenter).sub(cam.position)
+        val px = p.x
+        val py = p.y
+        p.x = -py //normal vector in the xy projection
+        p.y = px //normal vector in the xy projection
+        cam.rotateAround(faceCenter, p, thetaRotation) //45 degress
+        cam.update()
     }
 
     internal var currentMaterial: String? = null
@@ -246,13 +268,14 @@ class VoxelTest(val id: String) : GdxTest() {
     }
 
     private fun addWhiteBackground(modelBuilder: ModelBuilder) {
+        val bgSize=500f
         val bgMaterial = Material(ColorAttribute.createDiffuse(Color(1.0f, 1.0f, 1.0f, 1.0f)))
         val bgMeshBuilder = modelBuilder.part(
                 "bg",
                 GL20.GL_TRIANGLES,
                 (VertexAttributes.Usage.Position or VertexAttributes.Usage.Normal).toLong(),
                 bgMaterial)
-        BoxShapeBuilder.build(bgMeshBuilder, 16f, 64f, 16f, 200f, 10f, 200f) //a large white background
+        BoxShapeBuilder.build(bgMeshBuilder, 16f, 64f, 16f,bgSize, 10f, bgSize) //a large white background
     }
 
     private fun addVoxModelPart(modelBuilder: ModelBuilder, vox: VoxelData) {
