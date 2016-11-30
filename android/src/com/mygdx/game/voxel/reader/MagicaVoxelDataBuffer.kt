@@ -28,13 +28,12 @@ internal class MagicaVoxelDataBuffer(var nvoxels: Int) {
         color[i] = c
         colorcount[c.toInt()]++
     }
-    fun readVoxelXZ(stream: BinaryReader, i: Int, fixedy:Byte,subsample: Boolean) {
+    fun readVoxelXZ(stream: BinaryReader, i: Int, fixedy:Byte,fixedc:Int,subsample: Boolean) {
         if(subsample) throw IllegalArgumentException("subsample not supported anymore")
         x[i] =  stream.readByte()
         y[i] =  fixedy
         z[i] =  stream.readByte()
-        val c = (stream.readByte() - 1 and 0xff).toShort()
-        color[i] = c
-        colorcount[c.toInt()]++
+        color[i] = fixedc.toShort()
+        colorcount[fixedc]++
     }
 }

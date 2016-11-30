@@ -21,6 +21,69 @@ object VoxReader {
     //TODO convert to rgba888 color format?
     private val voxRGBAColors = intArrayOf(0x00000000, 0xffffffff.toInt(), 0xffccffff.toInt(), 0xff99ffff.toInt(), 0xff66ffff.toInt(), 0xff33ffff.toInt(), 0xff00ffff.toInt(), 0xffffccff.toInt(), 0xffccccff.toInt(), 0xff99ccff.toInt(), 0xff66ccff.toInt(), 0xff33ccff.toInt(), 0xff00ccff.toInt(), 0xffff99ff.toInt(), 0xffcc99ff.toInt(), 0xff9999ff.toInt(), 0x6699ffff, 0x3399ffff, 0x0099ffff, 0xff66ffff.toInt(), 0xcc66ffff.toInt(), 0x9966ffff.toInt(), 0x6666ffff, 0x3366ffff, 0x0066ffff, 0xff33ffff.toInt(), 0xcc33ffff.toInt(), 0x9933ffff.toInt(), 0x6633ffff, 0x3333ffff, 0x0033ffff, 0xff00ffff.toInt(), 0xcc00ffff.toInt(), 0x9900ffff.toInt(), 0x6600ffff, 0x3300ffff, 0x0000ffff, 0xffffccff.toInt(), 0xccffccff.toInt(), 0x99ffccff.toInt(), 0x66ffccff, 0x33ffccff, 0x00ffccff, 0xffccccff.toInt(), 0xccccccff.toInt(), 0x99ccccff.toInt(), 0x66ccccff, 0x33ccccff, 0x00ccccff, 0xff99ccff.toInt(), 0xcc99ccff.toInt(), 0x9999ccff.toInt(), 0x6699ccff, 0x3399ccff, 0x0099ccff, 0xff66ccff.toInt(), 0xcc66ccff.toInt(), 0x9966ccff.toInt(), 0x6666ccff, 0x3366ccff, 0x0066ccff, 0xff33ccff.toInt(), 0xcc33ccff.toInt(), 0x9933ccff.toInt(), 0x6633ccff, 0x3333ccff, 0x0033ccff, 0xff00ccff.toInt(), 0xcc00ccff.toInt(), 0x9900ccff.toInt(), 0x6600ccff, 0x3300ccff, 0x0000ccff, 0xffff99ff.toInt(), 0xccff99ff.toInt(), 0x99ff99ff.toInt(), 0x66ff99ff, 0x33ff99ff, 0x00ff99ff, 0xffcc99ff.toInt(), 0xcccc99ff.toInt(), 0x99cc99ff.toInt(), 0x66cc99ff, 0x33cc99ff, 0x00cc99ff, 0xff9999ff.toInt(), 0xcc9999ff.toInt(), 0x999999ff.toInt(), 0x669999ff, 0x339999ff, 0x009999ff, 0xff6699ff.toInt(), 0xcc6699ff.toInt(), 0x996699ff.toInt(), 0x666699ff, 0x336699ff, 0x006699ff, 0xff3399ff.toInt(), 0xcc3399ff.toInt(), 0x993399ff.toInt(), 0x663399ff, 0x333399ff, 0x003399ff, 0xff0099ff.toInt(), 0xcc0099ff.toInt(), 0x990099ff.toInt(), 0x660099ff, 0x330099ff, 0x000099ff, 0xffff66ff.toInt(), 0xccff66ff.toInt(), 0x99ff66ff.toInt(), 0x66ff66ff, 0x33ff66ff, 0x00ff66ff, 0xffcc66ff.toInt(), 0xcccc66ff.toInt(), 0x99cc66ff.toInt(), 0x66cc66ff, 0x33cc66ff, 0x00cc66ff, 0xff9966ff.toInt(), 0xcc9966ff.toInt(), 0x999966ff.toInt(), 0x669966ff, 0x339966ff, 0x009966ff, 0xff6666ff.toInt(), 0xcc6666ff.toInt(), 0x996666ff.toInt(), 0x666666ff, 0x336666ff, 0x006666ff, 0xff3366ff.toInt(), 0xcc3366ff.toInt(), 0x993366ff.toInt(), 0x663366ff, 0x333366ff, 0x003366ff, 0xff0066ff.toInt(), 0xcc0066ff.toInt(), 0x990066ff.toInt(), 0x660066ff, 0x330066ff, 0x000066ff, 0xffff33ff.toInt(), 0xccff33ff.toInt(), 0x99ff33ff.toInt(), 0x66ff33ff, 0x33ff33ff, 0x00ff33ff, 0xffcc33ff.toInt(), 0xcccc33ff.toInt(), 0x99cc33ff.toInt(), 0x66cc33ff, 0x33cc33ff, 0x00cc33ff, 0xff9933ff.toInt(), 0xcc9933ff.toInt(), 0x999933ff.toInt(), 0x669933ff, 0x339933ff, 0x009933ff, 0xff6633ff.toInt(), 0xcc6633ff.toInt(), 0x996633ff.toInt(), 0x666633ff, 0x336633ff, 0x006633ff, 0xff3333ff.toInt(), 0xcc3333ff.toInt(), 0x993333ff.toInt(), 0x663333ff, 0x333333ff, 0x003333ff, 0xff0033ff.toInt(), 0xcc0033ff.toInt(), 0x990033ff.toInt(), 0x660033ff, 0x330033ff, 0x000033ff, 0xffff00ff.toInt(), 0xccff00ff.toInt(), 0x99ff00ff.toInt(), 0x66ff00ff, 0x33ff00ff, 0x00ff00ff, 0xffcc00ff.toInt(), 0xcccc00ff.toInt(), 0x99cc00ff.toInt(), 0x66cc00ff, 0x33cc00ff, 0x00cc00ff, 0xff9900ff.toInt(), 0xcc9900ff.toInt(), 0x999900ff.toInt(), 0x669900ff, 0x339900ff, 0x009900ff, 0xff6600ff.toInt(), 0xcc6600ff.toInt(), 0x996600ff.toInt(), 0x666600ff, 0x336600ff, 0x006600ff, 0xff3300ff.toInt(), 0xcc3300ff.toInt(), 0x993300ff.toInt(), 0x663300ff, 0x333300ff, 0x003300ff, 0xff0000ff.toInt(), 0xcc0000ff.toInt(), 0x990000ff.toInt(), 0x660000ff, 0x330000ff, 0x0000eeff, 0x0000ddff, 0x0000bbff, 0x0000aaff, 0x000088ff, 0x000077ff, 0x000055ff, 0x000044ff, 0x000022ff, 0x000011ff, 0x00ee00ff, 0x00dd00ff, 0x00bb00ff, 0x00aa00ff, 0x008800ff, 0x007700ff, 0x005500ff, 0x004400ff, 0x002200ff, 0x001100ff, 0xee0000ff.toInt(), 0xdd0000ff.toInt(), 0xbb0000ff.toInt(), 0xaa0000ff.toInt(), 0x880000ff.toInt(), 0x770000ff, 0x550000ff, 0x440000ff, 0x220000ff, 0x110000ff, 0xeeeeeeff.toInt(), 0xddddddff.toInt(), 0xbbbbbbff.toInt(), 0xaaaaaaff.toInt(), 0x888888ff.toInt(), 0x777777ff, 0x555555ff, 0x444444ff, 0x222222ff, 0x111111ff)
 
+    /**
+     * custom file format for vox data, based on original vox but without rgba data and with compressed coordinated
+     */
+    fun toMagicaCustom(stream:BinaryWriter, voxData:VoxelData) {
+        with(stream) {
+            writeChars("VOX ")
+            writeInt32(150)
+            //----
+            writeChars("MAIN")
+            writeInt32(0)
+            writeInt32(0) //NOTE: THIS IS WRONG: I don't calculate the correct byte count, it is not used anyway!!! //        this.appendUInt32(data, this.vcount * 4 + 0x434);
+            //----
+            writeChars("SIZE")
+            writeInt32(12)
+            writeInt32(0)
+            writeInt32(voxData.sizex)
+            writeInt32(voxData.sizey)
+            writeInt32(voxData.sizez)
+            //----
+            writeChars("XZCY") //custom chunk!!
+            writeByte(voxData.nColors)
+            voxData.dataPerColor.forEach {
+                writeInt32(it.nvoxels) //nvoxels per color
+            }
+            voxData.dataPerColor.forEach { dpc->
+                val nPerY=dpc.sortY()
+                writeByte(dpc.voxelColorIndex) //nvoxels per color
+                var ivoxel=0
+                nPerY.forEach { npy_->
+                    writeShort(npy_.toShort()) //nPerY
+                    val fixedY=dpc.y[ivoxel]
+                    writeByte(fixedY.toInt())
+                    var npy=npy_
+                    while(--npy>=0) {
+                        writeByte(dpc.x[ivoxel].toInt())
+                        writeByte(dpc.z[ivoxel].toInt())
+                        ++ivoxel
+                    }
+                }
+            }
+
+
+        }
+
+
+//        this.appendString(data, "XYZI");
+//        this.appendUInt32(data, 4 + this.vcount * 4);
+//        this.appendUInt32(data, 0);
+//        this.appendUInt32(data, this.vcount);
+//        for (var key in this.voxels) {
+//            this.appendVoxel(data, key);
+//        }
+//        this.appendString(data, "RGBA");
+//        this.appendUInt32(data, 0x400);
+//        this.appendUInt32(data, 0);
+//        for (var i = 0; i < 256; i++) {
+//            this.appendRGBA(data, this.palette[i]);
+ //       }
+ //       this.saveByteArray([new Uint8Array(data)], filename)
+//        return
+//    }
+    }
+
     /// <summary>
     /// Load a MagicaVoxel .vox format file into the custom ushort[] structure that we use for voxel chunks.
     /// </summary>
@@ -65,12 +128,34 @@ object VoxReader {
                 } else if (chunkName == "XYZI") {
                     // XYZI contains n voxels
                     val numVoxels = stream.readInt32()
-                    val div = if (subsample) 2 else 1
 
                     // each voxel has x, y, z and color index values
                     voxelBuffer = MagicaVoxelDataBuffer(numVoxels)
                     for (i in 0..voxelBuffer.nvoxels - 1)
                         voxelBuffer.readVoxel(stream, i, subsample)
+                } else if (chunkName == "XZCY") { //custom chunk: voxels with common y grouped together per color
+                    val numColors = stream.readByte()
+                    var numVoxels=0
+                    val nVoxPerColor= Array<Int>(numColors.toInt()) {
+                        val c=stream.readInt32()
+                        numVoxels+=c
+                        c
+                    }
+                    voxelBuffer = MagicaVoxelDataBuffer(numVoxels)
+                    var ivoxel=0
+                    nVoxPerColor.forEach { nPerColor_ ->
+                        var nPerColor=nPerColor_
+                        val fixedColor:Int=stream.readByte().toInt() and 0xff
+                        while(nPerColor>0) {
+                            var numVoxelY=stream.readShort() //max of
+                            val fixedY=stream.readByte()
+                            while(--numVoxelY>=0) {
+                                voxelBuffer!!.readVoxelXZ(stream, ivoxel++,fixedY,fixedColor, subsample)
+                                --nPerColor
+                            }
+                        }
+                    }
+
                 } else if (chunkName == "RGBA") {
                     rgbacolors = IntArray(256)
 

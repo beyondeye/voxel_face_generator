@@ -22,7 +22,7 @@ class VoxelData internal constructor(val sizex: Int, val sizey: Int, val sizez: 
             var vdpc: VoxelDataPerColor? = null
             val nv = buffer.colorcount[icolor].toInt() //n.voxel with this color
             if (nv > 0) {
-                vdpc = VoxelDataPerColor(nv, colors[icolor])
+                vdpc = VoxelDataPerColor(nv, icolor,colors[icolor])
                 dataPerColor.add(vdpc)
             }
             cmp[icolor] = vdpc
