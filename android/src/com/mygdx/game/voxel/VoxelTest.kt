@@ -96,12 +96,15 @@ class VoxelTest(val id: String) : GdxTest() {
 			saveCompressedVox(vox,"")
 		}
 		*/
+        //*MUSTDO* add special treatment for part0: with increased probability (for example for optional parts like glasses)
         val facePartsGen = FacePartsGenerator(voxpath)
-        facePartsGen.addPart("nface", 8)
+        facePartsGen.addPart("vface", 8) //nface
         facePartsGen.addPart("nmouth", 2)
         facePartsGen.addPart("neyes", 14)
         facePartsGen.addPart("neyebrows", 8)
-        facePartsGen.addPart("nhair", 8)
+        facePartsGen.addPart("vhair", 8)
+        facePartsGen.addPart("vglasses", 6)
+
         val phirot = 25f
         val thetarot = 15f
         facePartsGen.addPhiThetaRot(0f,thetarot)
