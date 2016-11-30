@@ -13,6 +13,7 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+        main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
         applicationId "com.mygdx.game"
@@ -123,4 +124,11 @@ idea {
             }
         }
     }
+}
+apply plugin: 'kotlin-android'
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
