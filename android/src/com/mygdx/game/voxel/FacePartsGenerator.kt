@@ -142,7 +142,7 @@ class FacePartsGenerator(internal var basePath: String) {
 
     private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData? {
         val vxf1 = Gdx.files.internal(voxpath + voxname)
-        return VoxReader.fromMagica(BinaryReader(vxf1), defaultRGBAVoxPalette)
+        return VoxReader.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
     }
 
     private fun getRGBAVoxelPalette(voxpath: String, voxpalettename: String): IntArray? {

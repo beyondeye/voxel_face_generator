@@ -44,7 +44,7 @@ object VoxReader {
             var sizez = 0
             var subsample: Boolean = false
 
-            while (stream.position < stream.length) {
+            while (stream.position < stream.streamLen) {
                 // each chunk has an ID, size and child chunks
                 val chunkName = stream.readChars(4)
                 val chunkSize = stream.readInt32()

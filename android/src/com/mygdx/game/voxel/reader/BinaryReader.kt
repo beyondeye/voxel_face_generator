@@ -1,35 +1,22 @@
 package com.mygdx.game.voxel.reader
 
-import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.StringBuilder
 
-import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.EOFException
 import java.io.IOException
-import java.io.InputStream
+
 
 /**
  * Created by daely on 11/23/2016.
  */
-class BinaryReader(fh: FileHandle) {
-    private val rs: DataInputStream
-    var length: Int = 0
-        internal set
+class BinaryReader(val streamLen:Int, private val istream:DataInputStream) {
     var position: Int = 0
-        internal set
-
-    init {
-        val bytes = fh.readBytes()
-        length = bytes.size
-        position = 0
-        this.rs = DataInputStream(ByteArrayInputStream(bytes))
-    }
 
     fun readByte(): Byte {
         try {
             position += 1
-            return rs.read().toByte()
+            return istream.read().toByte()
         } catch (e: IOException) {
             return -1
         }
@@ -39,10 +26,10 @@ class BinaryReader(fh: FileHandle) {
     fun readInt32(): Int {
         try {
             position += 4
-            val ch1 = rs.read()
-            val ch2 = rs.read()
-            val ch3 = rs.read()
-            val ch4 = rs.read()
+            val ch1 = istream.read()
+            val ch2 = istream.read()
+            val ch3 = istream.read()
+            val ch4 = istream.read()
             if (ch1 or ch2 or ch3 or ch4 < 0)
                 throw EOFException()
             //            return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
@@ -59,7 +46,7 @@ class BinaryReader(fh: FileHandle) {
         try {
             position += i
             while (--i >= 0) {
-                sb.append(rs.readByte().toChar())
+                sb.append(istream.readByte().toChar())
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -72,7 +59,7 @@ class BinaryReader(fh: FileHandle) {
         position += i
         val res = ByteArray(i)
         try {
-            val actualRead = rs.read(res, 0, i)
+            val actualRead = istream.read(res, 0, i)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -83,7 +70,7 @@ class BinaryReader(fh: FileHandle) {
     fun skipBytes(i: Int) {
         position += i
         try {
-            rs.skipBytes(i)
+            istream.skipBytes(i)
         } catch (e: IOException) {
             e.printStackTrace()
         }

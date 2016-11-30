@@ -51,7 +51,14 @@ import com.mygdx.game.GdxTest
 import com.mygdx.game.voxel.reader.BinaryReader
 import com.mygdx.game.voxel.reader.VoxReader
 import com.mygdx.game.voxel.reader.VoxelData
-import com.mygdx.game.voxel.reader.VoxelDataPerColor
+import java.io.ByteArrayInputStream
+import java.io.DataInputStream
+
+fun FileHandle.toBinaryReader():BinaryReader {
+    val bytes = this.readBytes()
+    val length = bytes.size
+    return BinaryReader(length, DataInputStream(ByteArrayInputStream(bytes)))
+}
 
 class VoxelTest(val id: String) : GdxTest() {
 
@@ -242,7 +249,7 @@ class VoxelTest(val id: String) : GdxTest() {
 
     private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData? {
         val vxf1 = Gdx.files.internal(voxpath + voxname)
-        return VoxReader.fromMagica(BinaryReader(vxf1), defaultRGBAVoxPalette)
+        return VoxReader.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
     }
 
     private fun getRGBAVoxelPalette(voxpath: String, voxpalettename: String): IntArray {
