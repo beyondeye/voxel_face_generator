@@ -40,8 +40,8 @@ class BinaryReader(val streamLen:Int, private val istream:DataInputStream) {
 
     }
 
-    fun readChars(i: Int): String {
-        var i = i
+    fun readChars(count: Int): String {
+        var i = count
         val sb = StringBuilder(i)
         try {
             position += i
