@@ -39,6 +39,20 @@ class BinaryReader(val streamLen:Int, private val istream:DataInputStream) {
         }
 
     }
+    fun readShort(): Int {
+        try {
+            position += 2
+            val ch1 = istream.read()
+            val ch2 = istream.read()
+            if (ch1 or ch2  < 0)
+                throw EOFException()
+            //            return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+            return ch1 + (ch2 shl 8)
+        } catch (e: IOException) {
+            return -1
+        }
+
+    }
 
     fun readChars(count: Int): String {
         var i = count

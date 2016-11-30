@@ -10,10 +10,10 @@ import java.io.IOException
 class BinaryWriter(private val ostream:DataOutputStream) {
     var position: Int = 0
 
-    fun writeByte(b:Byte) {
+    fun writeByte(b:Int) {
         try {
             position += 1
-            return ostream.writeByte(b.toInt())
+            return ostream.writeByte(b)
         } catch (e: IOException) {
         }
 
@@ -37,6 +37,14 @@ class BinaryWriter(private val ostream:DataOutputStream) {
             ostream.writeByte((i ushr 8 and 0xff))
             ostream.writeByte((i ushr 16 and 0xff))
             ostream.writeByte((i ushr 24 and 0xff))
+        } catch (e: IOException) {
+        }
+    }
+    fun writeShort(s:Short) {
+        try {
+            position += 2
+            ostream.writeByte((s.toInt() ushr 0 and 0xff))
+            ostream.writeByte((s.toInt() ushr 8 and 0xff))
         } catch (e: IOException) {
         }
     }
