@@ -14,12 +14,14 @@
 <!--This TextView is empty and I put it here just to show that the layout has two parts
 and we are showing the libgdx in portion of screen (the above FrameLayout element)-->
     <TextView
+        android:clickable="true"
+        android:id="@+id/tv_new_seed"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#FF0000"
         android:textColor="#00FF00"
-        android:textSize="40dp"
-        android:text="I'm just a TextView here with red background :("/>
+        android:textSize="30dp"
+        android:text="Click for new face"/>
 
 </LinearLayout>
