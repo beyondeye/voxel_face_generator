@@ -39,9 +39,9 @@ class VoxelDataPerColor(nvoxels: Int, val voxelColorIndex:Int,val voxelrgbacolor
             }
             curyCoordList.add(Voxcoords(x[i].toInt(),z[i].toInt()))
         }
-        var ylist=cmap.keys.sortedByDescending { it }
+        val ylist=cmap.keys.sortedByDescending { it }
         var ivox=0
-        var ycounts= mutableListOf<Int>()
+        val ycounts= mutableListOf<Int>()
         ylist.forEach { cury->
             val curYCoordList=cmap[cury]!!
             ycounts.add(curYCoordList.size)
