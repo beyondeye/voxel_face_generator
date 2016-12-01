@@ -183,7 +183,7 @@ public class VoxelTestWithMergedLightsText extends GdxTest {
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1.vox");
 //		FileHandle vxf=Gdx.files.internal("data/vox/face1_thick.vox");
 		FileHandle vxf=Gdx.files.internal("data/vox/hair0_thick.vox");
-		VoxelData vox= VoxReader.fromMagica(new BinaryReader(vxf));
+		VoxelData vox= VoxIO.fromMagica(new BinaryReader(vxf));
 
 		//see https://github.com/libgdx/libgdx/wiki/ModelBuilder%2C-MeshBuilder-and-MeshPartBuilder
 		ModelBuilder modelBuilder=new ModelBuilder();

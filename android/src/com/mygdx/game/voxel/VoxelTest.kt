@@ -49,7 +49,7 @@ import com.badlogic.gdx.utils.BufferUtils
 import com.badlogic.gdx.utils.ScreenUtils
 import com.mygdx.game.GdxTest
 import com.mygdx.game.voxel.reader.BinaryReader
-import com.mygdx.game.voxel.reader.VoxReader
+import com.mygdx.game.voxel.reader.VoxIO
 import com.mygdx.game.voxel.reader.VoxelData
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
@@ -254,7 +254,7 @@ class VoxelTest(val id: String) : GdxTest() {
 
     private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData? {
         val vxf1 = Gdx.files.internal(voxpath + voxname)
-        return VoxReader.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
+        return VoxIO.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
     }
 
     private fun getRGBAVoxelPalette(voxpath: String, voxpalettename: String): IntArray {

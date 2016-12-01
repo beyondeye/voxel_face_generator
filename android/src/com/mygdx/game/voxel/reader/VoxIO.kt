@@ -1,7 +1,7 @@
 package com.mygdx.game.voxel.reader
 
 
-object VoxReader {
+object VoxIO {
     /*
     // this is the default palette of voxel colors (the RGBA chunk is only included if the palette is differe) (16 bits, 0RRR RRGG GGGB BBBB)
     private static short[] voxRGBAColors = new short[]{32767, 25599, 19455, 13311, 7167, 1023, 32543, 25375, 19231, 13087, 6943, 799, 32351, 25183,
@@ -66,13 +66,7 @@ object VoxReader {
         }
 
 
-//        this.appendString(data, "XYZI");
-//        this.appendUInt32(data, 4 + this.vcount * 4);
-//        this.appendUInt32(data, 0);
-//        this.appendUInt32(data, this.vcount);
-//        for (var key in this.voxels) {
-//            this.appendVoxel(data, key);
-//        }
+
 //        this.appendString(data, "RGBA");
 //        this.appendUInt32(data, 0x400);
 //        this.appendUInt32(data, 0);
@@ -80,6 +74,50 @@ object VoxReader {
 //            this.appendRGBA(data, this.palette[i]);
  //       }
  //       this.saveByteArray([new Uint8Array(data)], filename)
+//        return
+//    }
+    }
+    /**
+     * write a VoxelData to a bare-bones vox file with no palette chunk
+     */
+    fun toMagica(stream:BinaryWriter, voxData:VoxelData,withPalette:Boolean=false) {
+        if(withPalette) throw NotImplementedError()
+        with(stream) {
+            writeChars("VOX ")
+            writeInt32(150)
+            //----
+            writeChars("MAIN")
+            writeInt32(0)
+            writeInt32((12+4+4*voxData.nvoxels)+(12+3*4)) //child chunks: SIZE and XYZI
+            //----
+            writeChars("SIZE")
+            writeInt32(12)
+            writeInt32(0) //no child chunks
+            writeInt32(voxData.sizex)
+            writeInt32(voxData.sizey)
+            writeInt32(voxData.sizez)
+            //----
+            writeChars("XYZI")
+            writeInt32(4+voxData.nvoxels*4)
+            writeInt32(0)
+            writeInt32(voxData.nvoxels)
+            voxData.dataPerColor.forEach { dpc->
+                for (i in dpc.x.indices) {
+                    writeByte(dpc.x[i].toInt())
+                    writeByte(dpc.y[i].toInt())
+                    writeByte(dpc.z[i].toInt())
+                    writeByte(dpc.voxelColorIndex)
+                }
+
+            }
+        }
+//        this.appendString(data, "RGBA");
+//        this.appendUInt32(data, 0x400);
+//        this.appendUInt32(data, 0);
+//        for (var i = 0; i < 256; i++) {
+//            this.appendRGBA(data, this.palette[i]);
+        //       }
+        //       this.saveByteArray([new Uint8Array(data)], filename)
 //        return
 //    }
     }

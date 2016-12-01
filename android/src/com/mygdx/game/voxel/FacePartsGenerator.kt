@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Pixmap
 import com.mygdx.game.voxel.reader.BinaryReader
-import com.mygdx.game.voxel.reader.VoxReader
+import com.mygdx.game.voxel.reader.VoxIO
 import com.mygdx.game.voxel.reader.VoxelData
 
 import java.security.MessageDigest
@@ -181,7 +181,7 @@ class FacePartsGenerator(internal var basePath: String) {
 
     private fun getVoxelData(voxpath: String, defaultRGBAVoxPalette: IntArray, voxname: String): VoxelData? {
         val vxf1 = Gdx.files.internal(voxpath + voxname)
-        return VoxReader.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
+        return VoxIO.fromMagica(vxf1.toBinaryReader(), defaultRGBAVoxPalette)
     }
 
     private fun getRGBAVoxelPalette(voxpath: String, voxpalettename: String): IntArray? {

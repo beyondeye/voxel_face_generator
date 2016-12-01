@@ -17,7 +17,6 @@
 package com.mygdx.game.voxel;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -32,9 +31,6 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.GdxTest;
-import com.mygdx.game.voxel.reader.BinaryReader;
-import com.mygdx.game.voxel.reader.VoxReader;
-import com.mygdx.game.voxel.reader.VoxelData;
 
 public class VoxelTestOriginal extends GdxTest {
 	SpriteBatch spriteBatch;
