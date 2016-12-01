@@ -104,6 +104,7 @@ class VoxelTest(val id: String) : GdxTest() {
         facePartsGen.addPart("neyebrows", 8)
         facePartsGen.addPart("vhair", 8)
         facePartsGen.addPart("vglasses", 19)
+        facePartsGen.setWeight("vglasses",14,0) //increase weight of "no glasses"
 
         val phirot = 25f
         val thetarot = 15f
@@ -116,7 +117,8 @@ class VoxelTest(val id: String) : GdxTest() {
         val camerarot=faceparts.rot
 
         spriteBatch = SpriteBatch()
-        font = BitmapFont()
+        font = BitmapFont(Gdx.files.internal("data/arial-32.fnt"),Gdx.files.internal("data/arial-32.png"),
+                false, true)
 
         instances = Array<ModelInstance>()
         models = Array<Model>()
@@ -325,7 +327,7 @@ class VoxelTest(val id: String) : GdxTest() {
         controller.update()
 
         spriteBatch.begin()
-        font.draw(spriteBatch, "fps: " + Gdx.graphics.framesPerSecond + "camdir:" + cam.direction.toString(), 0f, 20f)
+        font.draw(spriteBatch, "fps: " + Gdx.graphics.framesPerSecond  , 0f, 60f)
         spriteBatch.end()
     }
 

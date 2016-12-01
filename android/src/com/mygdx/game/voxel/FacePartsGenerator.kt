@@ -42,19 +42,25 @@ class FacePartsGenerator(internal var basePath: String) {
     companion object {
         private val phiThetaRotPartName = "PhiThetaRotation"
     }
-    internal val partNames: ArrayList<String>
-    internal val partCounts: ArrayList<Int>
-    internal val rots:ArrayList<Pair<Float,Float>>
-    internal var rand: MersenneTwisterFast? = null
-    internal var idDigestMode: Int = 0
+    private val partNamesIdxs: MutableMap<String,Int>
+    private val partWeights: MutableList<Array<Int>>
+    private val partWeightsTot: MutableList<Int>
+    internal val partNames: MutableList<String>
+    internal val partCounts: MutableList<Int>
+    internal val rots:MutableList<Pair<Float,Float>>
+    private var rand: MersenneTwisterFast? = null
+    private var idDigestMode: Int = 0
 
 
     init {
         rand = null
         idDigestMode = 1 //MD5
-        partCounts = ArrayList<Int>()
-        partNames = ArrayList<String>()
-        rots=ArrayList<Pair<Float,Float>>()
+        partCounts = mutableListOf()
+        partNames = mutableListOf()
+        partNamesIdxs= hashMapOf()
+        partWeights = mutableListOf()
+        partWeightsTot = mutableListOf()
+        rots=mutableListOf()
         addPart(phiThetaRotPartName,0)
     }
 
@@ -65,12 +71,30 @@ class FacePartsGenerator(internal var basePath: String) {
      * @param count
      */
     fun addPart(name: String, count: Int) {
+        val nxtidx=partNames.count()
+        partNamesIdxs.put(name,nxtidx)
         partNames.add(name)
         partCounts.add(count)
+        partWeights.add(Array<Int>(count){1}) //initialize with weight one for all
+        partWeightsTot.add(count)
     }
+    fun setWeight(name:String, newWeight:Int,firstIdx:Int,lastIdx_:Int?=null){
+        val lastIdx= lastIdx_?:firstIdx
+        val partIdx=partNamesIdxs.get(name) ?:return
+        val weightsVec=partWeights[partIdx]
+        for(i in firstIdx..lastIdx) {
+            weightsVec[i]=newWeight
+        }
+        partWeightsTot[partIdx]=weightsVec.sum()
+    }
+
+
+
     fun addPhiThetaRot(phiRot:Float,thetaRot:Float) {
         rots.add(Pair(phiRot,thetaRot))
-        partCounts[0]+=1
+        val pc= ++partCounts[0]
+        partWeights[0]=Array<Int>(pc){1}
+        partWeightsTot[0]=pc
     }
 
     fun nParts(): Int {
@@ -103,11 +127,26 @@ class FacePartsGenerator(internal var basePath: String) {
         val nparts_ = nParts()
         val selectedParts = IntArray(nparts_)
         for (i in 0..nparts_ - 1) {
-            selectedParts[i] = mtf.nextInt(partCounts[i])
+            selectedParts[i] = selectPart(i,mtf)
         }
         return selectedParts
     }
-
+    private fun selectPart(partIdx:Int,mtf:MersenneTwisterFast):Int {
+        //return mtf.nextInt(partCounts[partIdx])
+        return indexFromWeights(partWeights[partIdx],partWeightsTot[partIdx],mtf)
+    }
+    private fun indexFromWeights(weights: Array<Int>,total:Int, rndgen: MersenneTwisterFast): Int {
+//        var total = 0.0
+//        for (i in weights.indices) {
+//            total += weights[i].toDouble()
+//        }
+        var position =  rndgen.nextInt(total)
+        for (i in weights.indices) {
+            position -= weights[i]
+            if (position <= 0) return i
+        }
+        throw Error("Funny probabilities array!")
+    }
     private fun byteToInt(bytes: ByteArray): IntArray {
         val len = bytes.size
         val ints = IntArray(len)
