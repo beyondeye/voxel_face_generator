@@ -38,13 +38,31 @@ import java.util.ArrayList
 
 class FaceParts(val voxels:Array<VoxelData>,val rot:Pair<Float,Float>)
 
+class FacePartsWeights internal constructor(partCounts:List<Int>,partNamesIdxs: MutableMap<String,Int>) {
+    private val partNamesIdxs: MutableMap<String,Int>
+    val partWeights: List<Array<Int>>
+    val partWeightsTot: MutableList<Int>
+    init {
+        this.partNamesIdxs=partNamesIdxs
+        partWeights = partCounts.map { count-> Array<Int>(count){1} }
+        partWeightsTot = partCounts.map { it }.toMutableList()
+    }
+    fun setWeight(name:String, newWeight:Int,firstIdx:Int,lastIdx_:Int?=null){
+        val lastIdx= lastIdx_?:firstIdx
+        val partIdx=partNamesIdxs.get(name) ?:return
+        val weightsVec=partWeights[partIdx]
+        for(i in firstIdx..lastIdx) {
+            weightsVec[i]=newWeight
+        }
+        partWeightsTot[partIdx]=weightsVec.sum()
+    }
+}
+
 class FacePartsGenerator(internal var basePath: String) {
     companion object {
         private val phiThetaRotPartName = "PhiThetaRotation"
     }
     private val partNamesIdxs: MutableMap<String,Int>
-    private val partWeights: MutableList<Array<Int>>
-    private val partWeightsTot: MutableList<Int>
     internal val partNames: MutableList<String>
     internal val partCounts: MutableList<Int>
     internal val rots:MutableList<Pair<Float,Float>>
@@ -58,8 +76,6 @@ class FacePartsGenerator(internal var basePath: String) {
         partCounts = mutableListOf()
         partNames = mutableListOf()
         partNamesIdxs= hashMapOf()
-        partWeights = mutableListOf()
-        partWeightsTot = mutableListOf()
         rots=mutableListOf()
         addPart(phiThetaRotPartName,0)
     }
@@ -75,34 +91,22 @@ class FacePartsGenerator(internal var basePath: String) {
         partNamesIdxs.put(name,nxtidx)
         partNames.add(name)
         partCounts.add(count)
-        partWeights.add(Array<Int>(count){1}) //initialize with weight one for all
-        partWeightsTot.add(count)
     }
-    fun setWeight(name:String, newWeight:Int,firstIdx:Int,lastIdx_:Int?=null){
-        val lastIdx= lastIdx_?:firstIdx
-        val partIdx=partNamesIdxs.get(name) ?:return
-        val weightsVec=partWeights[partIdx]
-        for(i in firstIdx..lastIdx) {
-            weightsVec[i]=newWeight
-        }
-        partWeightsTot[partIdx]=weightsVec.sum()
-    }
+
 
 
 
     fun addPhiThetaRot(phiRot:Float,thetaRot:Float) {
         rots.add(Pair(phiRot,thetaRot))
-        val pc= ++partCounts[0]
-        partWeights[0]=Array<Int>(pc){1}
-        partWeightsTot[0]=pc
+        ++partCounts[0]
     }
 
     fun nParts(): Int {
         return partCounts.size
     }
 
-    fun getFaceParts(id: String): FaceParts? {
-        val selectedParts = getFacePartIdxFromId(id) ?: return null
+    fun getFaceParts(id: String, w:FacePartsWeights): FaceParts? {
+        val selectedParts = getFacePartIdxFromId(id,w) ?: return null
         val nparts = nParts()
         val rot=rots[selectedParts[0]] //first part is always the rotation
         val voxels = Array<VoxelData>(nparts-1) { ipart ->
@@ -113,8 +117,8 @@ class FacePartsGenerator(internal var basePath: String) {
         }
         return FaceParts(voxels,rot)
     }
-
-    private fun getFacePartIdxFromId(id: String): IntArray? {
+    fun createWeights()= FacePartsWeights(partCounts,partNamesIdxs)
+    private fun getFacePartIdxFromId(id: String,w:FacePartsWeights): IntArray? {
         var digest: ByteArray? = null
         when (idDigestMode) {
             0 -> digest = digestVerbatim(id)
@@ -127,13 +131,13 @@ class FacePartsGenerator(internal var basePath: String) {
         val nparts_ = nParts()
         val selectedParts = IntArray(nparts_)
         for (i in 0..nparts_ - 1) {
-            selectedParts[i] = selectPart(i,mtf)
+            selectedParts[i] = selectPart(i,mtf,w)
         }
         return selectedParts
     }
-    private fun selectPart(partIdx:Int,mtf:MersenneTwisterFast):Int {
+    private fun selectPart(partIdx:Int,mtf:MersenneTwisterFast,w:FacePartsWeights):Int {
         //return mtf.nextInt(partCounts[partIdx])
-        return indexFromWeights(partWeights[partIdx],partWeightsTot[partIdx],mtf)
+        return indexFromWeights(w.partWeights[partIdx],w.partWeightsTot[partIdx],mtf)
     }
     private fun indexFromWeights(weights: Array<Int>,total:Int, rndgen: MersenneTwisterFast): Int {
 //        var total = 0.0

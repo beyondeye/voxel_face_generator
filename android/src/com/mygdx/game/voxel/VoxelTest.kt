@@ -104,15 +104,15 @@ class VoxelTest(val id: String) : GdxTest() {
         facePartsGen.addPart("neyebrows", 8)
         facePartsGen.addPart("vhair", 8)
         facePartsGen.addPart("vglasses", 19)
-        facePartsGen.setWeight("vglasses",14,0) //increase weight of "no glasses"
-
         val phirot = 25f
         val thetarot = 15f
         facePartsGen.addPhiThetaRot(0f,thetarot)
         facePartsGen.addPhiThetaRot(phirot,thetarot)
         facePartsGen.addPhiThetaRot(-phirot,thetarot)
-
-        val faceparts = facePartsGen.getFaceParts(id)
+        //---------
+        val fw=facePartsGen.createWeights()
+        fw.setWeight("vglasses",14,0) //increase weight of "no glasses"
+        val faceparts = facePartsGen.getFaceParts(id,fw)
         if(faceparts==null) return
         val camerarot=faceparts.rot
 
