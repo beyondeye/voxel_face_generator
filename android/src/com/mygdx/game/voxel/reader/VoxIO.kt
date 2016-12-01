@@ -106,7 +106,7 @@ object VoxIO {
                     writeByte(dpc.x[i].toInt())
                     writeByte(dpc.y[i].toInt())
                     writeByte(dpc.z[i].toInt())
-                    writeByte(dpc.voxelColorIndex)
+                    writeByte(dpc.voxelColorIndex+1)
                 }
 
             }
