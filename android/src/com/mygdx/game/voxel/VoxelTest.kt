@@ -104,6 +104,7 @@ class VoxelTest(val id: String) : GdxTest() {
         facePartsGen.addPart("neyebrows", 8)
         facePartsGen.addPart("vhair", 8)
         facePartsGen.addPart("vglasses", 19)
+        facePartsGen.addPart("vcloth", 12)
         val phirot = 25f
         val thetarot = 15f
         facePartsGen.addPhiThetaRot(0f,thetarot)
