@@ -101,7 +101,7 @@ class VoxelTest(val id: String) : GdxTest() {
         facePartsGen.addPart("vface", 8) //nface
         facePartsGen.addPart("nmouth", 2)
         facePartsGen.addPart("neyes", 70)
-        facePartsGen.addPart("neyebrows", 8)
+        facePartsGen.addPart("neyebrows", 32)
         facePartsGen.addPart("vhair", 40)
         facePartsGen.addPart("vglasses", 19)
         facePartsGen.addPart("vcloth", 12)
